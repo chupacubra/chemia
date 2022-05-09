@@ -14,5 +14,5 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 	self.content = {}
-	self.limit = 120
+	self.limit = 100
 end
