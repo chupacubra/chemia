@@ -8,10 +8,11 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
-  self:SetUseType(SIMPLE_USE)
-  local phys = self:GetPhysicsObject()
+	self:SetUseType(SIMPLE_USE)
+	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
-  self.content = {}
+	self.content = {}
+	self.limit = 120
 end
