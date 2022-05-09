@@ -6,9 +6,6 @@ include('shared.lua')
 function ENT:SetupDataTables()
 	self:NetworkVar( "String", 1,"Content" )
 end
- 
-function ENT:Use( activator, caller )
-end
 
 function ENT:Think()
   local tbl = FormContent(self)
