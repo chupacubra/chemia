@@ -5,11 +5,19 @@ FAST_REC  = {} -- FAST receipts without perebor
 FOR_CL    = {} -- information about chemicals for clients
 chem = {}
 
+function AllCompUnits(bucket)
+	local i = 0
+	for k,v in pairs(bucket.content) do
+		i = i + v:getUnits()
+	end
+	return i
+end
+
 function CHEMIC:AddComp(name,unit,bucket)
     if !CHEMICALS[name] or !bucket then
       return
     end
-    --PrintTable(bucket.content)
+	
     if bucket.content[name] then
       bucket.content[name]:AddUnit(unit)
       return
@@ -22,7 +30,7 @@ function CHEMIC:AddComp(name,unit,bucket)
     end
     
     local obj = {}
-    --obj.data = CHEMICALS["data"]
+    
     obj.unit = unit
     obj.name = name
     obj.fm   = false
@@ -36,12 +44,30 @@ function CHEMIC:AddComp(name,unit,bucket)
     end
     
     function obj:AddUnit(int)
-      self.unit = self.unit + int
-      if self.unit < 1 then
-        bucket.content[name] = nil
-        return
-      end
-    end
+		if bucket.limit then
+			local all = AllCompUnits(bucket)
+			local canfill = bucket.limit - all
+			if canfill == 0 then 
+				return
+			end
+			
+			if int > canfill then
+				self.unit = self.unit + canfill
+			else
+				self.unit = self.unit + int
+				if self.unit < 1 then
+					bucket.content[name] = nil
+					return
+				end
+			end
+		else
+			self.unit = self.unit + int
+			if self.unit < 1 then
+				bucket.content[name] = nil
+				return
+			end
+		end
+   end
     
     function obj:OnPlyClbck(ply)
       CHEMICALS[self:getName()]["callbackInPly"](self,ply)
