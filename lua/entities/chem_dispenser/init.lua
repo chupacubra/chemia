@@ -8,8 +8,7 @@ function ENT:SetupDataTables()
   self:NetworkVar("Int",1,"ChemDose")
   self:NetworkVar("Entity",2,"Bucket")
 	if ( SERVER ) then
-		self:NetworkVarNotify( "LastPly", self.OnVarChanged )
-    	self:SetChemDose(1)
+		self:SetChemDose(1)
 	end
 end
 
