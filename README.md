@@ -25,3 +25,5 @@ CHEMIC:New("Name",{
     }
 })
 ```
+
+beaker entity need model from [workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=436256590) and not working. need for test base_container
