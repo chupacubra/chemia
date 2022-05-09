@@ -4,12 +4,12 @@ AddCSLuaFile( "shared.lua" )
 include('shared.lua')
 
 function ENT:SetupDataTables()
-	self:NetworkVar( "Entity", 1,"LastPly" )
+  self:NetworkVar( "Entity", 1,"LastPly" )
   self:NetworkVar("Int",1,"ChemDose")
   self:NetworkVar("Entity",2,"Bucket")
 	if ( SERVER ) then
 		self:NetworkVarNotify( "LastPly", self.OnVarChanged )
-    self:SetChemDose(1)
+    	self:SetChemDose(1)
 	end
 end
 
@@ -18,8 +18,8 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
-  self:SetUseType(SIMPLE_USE)
-  local phys = self:GetPhysicsObject()
+	self:SetUseType(SIMPLE_USE)
+	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
