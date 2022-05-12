@@ -22,7 +22,17 @@ function CHEMIC:AddComp(name,unit,bucket)
       bucket.content[name]:AddUnit(unit)
       return
     elseif bucket.content[name] == nil and unit > 1 then
-      
+      if bucket.limit then
+        local all = AllCompUnits(bucket)
+        local canfill = bucket.limit - all
+        if canfill == 0 then 
+          return
+        end
+
+        if canfill < unit then
+          unit = canfill
+        else
+      end
     end
     
     if unit < 1 then
@@ -44,30 +54,37 @@ function CHEMIC:AddComp(name,unit,bucket)
     end
     
     function obj:AddUnit(int)
-		if bucket.limit then
-			local all = AllCompUnits(bucket)
-			local canfill = bucket.limit - all
-			if canfill == 0 then 
-				return
-			end
-			
-			if int > canfill then
-				self.unit = self.unit + canfill
-			else
-				self.unit = self.unit + int
-				if self.unit < 1 then
-					bucket.content[name] = nil
-					return
-				end
-			end
-		else
-			self.unit = self.unit + int
-			if self.unit < 1 then
-				bucket.content[name] = nil
-				return
-			end
-		end
-   end
+      if bucket.limit then
+        local all = AllCompUnits(bucket)
+        local canfill = bucket.limit - all
+
+        if canfill == 0 and int > 0 then 
+          return
+        elseif int < 0 then
+          self.unit = self.unit + int
+          if self.unit < 1 then
+            bucket.content[name] = nil
+            return
+          end
+        end
+        
+        if int > canfill then
+          self.unit = self.unit + canfill
+        else
+          self.unit = self.unit + int
+          if self.unit < 1 then
+            bucket.content[name] = nil
+            return
+          end
+        end
+      else
+        self.unit = self.unit + int
+        if self.unit < 1 then
+          bucket.content[name] = nil
+          return
+        end
+      end
+    end
     
     function obj:OnPlyClbck(ply)
       CHEMICALS[self:getName()]["callbackInPly"](self,ply)
@@ -83,6 +100,7 @@ function CHEMIC:AddComp(name,unit,bucket)
     
     setmetatable(obj, self)
     self.__index = self; bucket.content[name] = obj
+  end
 end
 
 function CHEMIC:New(name,data --[[{simpleName,callbackInPly,callBackInMix,receipt}--]])
