@@ -59,9 +59,8 @@ function ENT:Think()
     self.tickdel = CurTime() + 1
   else
     if #self.beakcontent != 2 then
-      for k, v in pairs(ents.FindByClass("bucket")) do
-        local dist = self:GetPos():Distance(v:GetPos())
-        if (dist <= 16) then
+	  for k, v in pairs(ents.FindInSphere(self:GetPos(),16)) do
+        if v:GetClass() == "bucket" or v:GetClass() == "beaker" then
           table.insert(self.beakcontent,v.content)
           v:Remove()
         end
