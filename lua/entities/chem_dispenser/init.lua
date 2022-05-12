@@ -36,21 +36,21 @@ end
 function ENT:Think()
 	if self:GetBucket() == Entity(-1) then
     	if self.canins then
-			for k, v in pairs(ents.FindInSphere(self:GetPos(),80)) do
-				if v:GetClass() == "bucket" then
-					constraint.NoCollide( self, v, 0, 0 )
-					v:SetPos(self:LocalToWorld( Vector(-7,-18,-17.8) ))
-					v:SetAngles( self:GetAngles() )
-					self.constr = constraint.Weld( self, v, 0, 0, 0,true, false )
-					self:SetBucket(v)
-				elseif v:GetClass() == "beaker" then --NOT TESTING!!!!!1
-					constraint.NoCollide( self, v, 0, 0 )
-					v:SetPos(self:LocalToWorld( Vector(-7,-18,-17.8) ))
-					v:SetAngles( self:GetAngles() )
-					self.constr = constraint.Weld( self, v, 0, 0, 0,true, false )
-					self:SetBucket(v)
-				end
+		  for k, v in pairs(ents.FindInSphere(self:GetPos(),80)) do
+			if v:GetClass() == "bucket" then
+			  constraint.NoCollide( self, v, 0, 0 )
+			  v:SetPos(self:LocalToWorld( Vector(-7,-18,-17.8) ))
+			  v:SetAngles( self:GetAngles() )
+			  self.constr = constraint.Weld( self, v, 0, 0, 0,true, false )
+			  self:SetBucket(v)
+			elseif v:GetClass() == "beaker" then
+			  constraint.NoCollide( self, v, 0, 0 )
+			  v:SetPos(self:LocalToWorld( Vector(0,5,-18) ))
+			  v:SetAngles( self:GetAngles() )
+			  self.constr = constraint.Weld( self, v, 0, 0, 0,true, false )
+			  self:SetBucket(v)
 			end
+		  end
 		end
 	end
 end
