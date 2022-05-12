@@ -12,71 +12,88 @@ function AllCompUnits(bucket)
 	end
 	return i
 end
+function AllCompUnits(bucket)
+	local i = 0
+	for k,v in pairs(bucket.content) do
+		i = i + v:getUnits()
+	end
+	return i
+end
 
 function CHEMIC:AddComp(name,unit,bucket)
-    if !CHEMICALS[name] or !bucket then
-      return
-    end
-	
-    if bucket.content[name] then
-      bucket.content[name]:AddUnit(unit)
-      return
-    elseif bucket.content[name] == nil and unit > 1 then
-      if bucket.limit then
-        local all = AllCompUnits(bucket)
-        local canfill = bucket.limit - all
-        if canfill == 0 then 
-          return
-        end
+  if !CHEMICALS[name] or !bucket then
+    return
+  end
 
-        if canfill < unit then
-          unit = canfill
-        else
+  if bucket.content[name] then
+    bucket.content[name]:AddUnit(unit)
+    return
+  elseif bucket.content[name] == nil and unit > 0 then
+    if bucket.limit then
+      local all = AllCompUnits(bucket)
+      local canfill = bucket.limit - all
+      if canfill == 0 then 
+        return
+      end
+
+      if canfill < unit then
+        unit = canfill
+      else
+
       end
     end
-    
-    if unit < 1 then
+  end
+  
+  if unit < 1 then
+    return
+  end
+  
+  local obj = {}
+  
+  obj.unit = unit
+  obj.name = name
+  obj.fm   = false
+  
+  function obj:getName()
+    return self.name
+  end
+  
+  function obj:getUnits()
+    return self.unit
+  end
+  
+  function obj:DecUnit(int)
+    self.unit = self.unit + int
+    if self.unit < 1 then
+      bucket.content[name] = nil
       return
     end
-    
-    local obj = {}
-    
-    obj.unit = unit
-    obj.name = name
-    obj.fm   = false
-    
-    function obj:getName()
-      return self.name
-    end
-    
-    function obj:getUnits()
-      return self.unit
-    end
-    
-    function obj:AddUnit(int)
-      if bucket.limit then
-        local all = AllCompUnits(bucket)
-        local canfill = bucket.limit - all
+  end
 
-        if canfill == 0 and int > 0 then 
+  function obj:AddUnit(int)
+    if int < 0 then
+      self:DecUnit(int)
+      return
+    end
+    local all = AllCompUnits(bucket)
+    local canfill = bucket.limit - all
+
+    if bucket.limit then
+      local all = AllCompUnits(bucket)
+      local canfill = bucket.limit - all
+
+      if canfill == 0 and int > 0 then 
+        return
+      elseif int < 0 then
+        self.unit = self.unit + int
+        if self.unit < 1 then
+          bucket.content[name] = nil
           return
-        elseif int < 0 then
-          self.unit = self.unit + int
-          if self.unit < 1 then
-            bucket.content[name] = nil
-            return
-          end
         end
-        
-        if int > canfill then
-          self.unit = self.unit + canfill
-        else
-          self.unit = self.unit + int
-          if self.unit < 1 then
-            bucket.content[name] = nil
-            return
-          end
-        end
+      end
+      
+      if int > canfill then
+        self.unit = self.unit + canfill
       else
         self.unit = self.unit + int
         if self.unit < 1 then
@@ -84,24 +101,31 @@ function CHEMIC:AddComp(name,unit,bucket)
           return
         end
       end
-    end
-    
-    function obj:OnPlyClbck(ply)
-      CHEMICALS[self:getName()]["callbackInPly"](self,ply)
-    end
-    
-    function obj:OnFirstMix(bucket)
-      if self.fm then
+    else
+      self.unit = self.unit + int
+      if self.unit < 1 then
+        bucket.content[name] = nil
         return
       end
-      CHEMICALS[self:getName()]["callBackInMix"](self,bucket)
-      self.fm = true
     end
-    
-    setmetatable(obj, self)
-    self.__index = self; bucket.content[name] = obj
   end
+  
+  function obj:OnPlyClbck(ply)
+    CHEMICALS[self:getName()]["callbackInPly"](self,ply)
+  end
+  
+  function obj:OnFirstMix(bucket)
+    if self.fm then
+      return
+    end
+    CHEMICALS[self:getName()]["callBackInMix"](self,bucket)
+    self.fm = true
+  end
+  
+  setmetatable(obj, self)
+  self.__index = self; bucket.content[name] = obj
 end
+
 
 function CHEMIC:New(name,data --[[{simpleName,callbackInPly,callBackInMix,receipt}--]])
   CHEMICALS[data["simpleName"]] = {
