@@ -13,15 +13,16 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
-  self:SetUseType(SIMPLE_USE)
-  local phys = self:GetPhysicsObject()
+	self:SetUseType(SIMPLE_USE)
+	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
-  self.beakcontent = {}
-  self.content = {}
-  self.active = false
-  self.tickdel = 0
+	self.beakcontent = {}
+	self.content = {}
+	self.active = false
+	self.tickdel = 0
+	self.limit = 1000
 end
 
 function ENT:Use()
